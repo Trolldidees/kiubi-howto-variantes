@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!-- 
+Configuration du produit "Produit simple"
+-->
+<!DOCTYPE type SYSTEM "http://www.kiubi-admin.com/DTD/typesproduits.dtd"> 
+<type tri="1">
+	<desc>T-shirt</desc>
+	<listechamps>
+	</listechamps>
+	<extra>
+		<critere>Coloris</critere>
+		<critere>Taille</critere>
+		<critere>Coupe</critere>
+	</extra>
+</type>

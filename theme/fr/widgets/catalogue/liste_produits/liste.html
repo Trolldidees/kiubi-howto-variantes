@@ -1,0 +1,129 @@
+<!-- 
+Template du Widget "Liste des produits" pour l'affichage en mode "Liste"
+-->
+
+<!-- BEGIN: main -->
+<!-- BEGIN:produits -->
+<ul class="produit_liste">	
+  <!-- BEGIN:produit -->
+  <li>
+	<form id="fp{serial}_{produit_id}" method="post" action="{baseLangue}/ecommerce/panier.html">
+    <div class="post_produit color_{alterne}">
+      <!-- BEGIN: illustration -->
+      <figure><a href="{lien_produit}" title="{intitule_produit|htmlentities} - Cliquez pour acc&eacute;der" class="illustration"><img src="{url_illustration_miniature}" alt="{intitule_produit|htmlentities}" /></a></figure>
+      <!-- END: illustration -->
+      <!-- BEGIN: noillustration -->
+      <figure><a href="{lien_produit}" title="{intitule_produit|htmlentities} - Cliquez pour acc&eacute;der" class="illustration"><img src="{racine}/{theme}/fr/images/produit_mini.gif" alt="{intitule_produit|htmlentities}" style="width: {miniature_l}px; height: {miniature_h}px;" /></a></figure>
+      <!-- END: noillustration -->
+      <div class="post_content" style="margin-left: {miniature_l}px;">
+        <h2><a href="{lien_produit}">{intitule_produit}</a></h2>
+        
+        <!-- BEGIN:tags -->
+        <p class="tags">{tags}</p>
+        <!-- END:tags -->
+        <!-- BEGIN:non_disponible -->
+        <p class="alerte">Disponible à partir du {num_jour_disponibilite}/{num_mois_disponibilite}/{annee_disponibilite}</p>
+        <!-- END:non_disponible -->
+        <!-- BEGIN:rupture_partielle -->
+        <p class="alerte">Certaines variantes sont indisponibles</p>
+        <!-- END:rupture_partielle -->
+        <!-- BEGIN:rupture -->
+        <p class="alerte">Produit en rupture de stock</p>
+        <!-- END:rupture -->
+         <!-- BEGIN:accroche -->
+        <p class="desc">{accroche}</p>
+        <!-- END:accroche -->
+        <p class="prix"><span class="<!-- BEGIN:prix_promo -->promo<!-- END:prix_promo -->">{prix}</span>
+          <!-- BEGIN:prix_barre -->
+          <del>{prix_barre}</del>
+          <!-- END:prix_barre -->
+        </p>
+        <div class="produit_infos">
+          <!-- BEGIN:variantes_optim -->
+          <select name="vid" class="variantes">
+            <!-- BEGIN:variante -->
+            <!-- BEGIN:en_stock -->
+            <option value="{variante_id}">{intitule_variante} - {prix_variante}</option>
+            <!-- END:en_stock -->
+            <!-- BEGIN:rupture -->
+            <!--<optgroup label="{intitule_variante} - {prix_variante}" disabled="disabled"></optgroup>-->
+            <!-- END:rupture -->
+            <!-- END:variante -->
+          </select>
+          <!-- END:variantes_optim -->
+          <!-- BEGIN: panier -->
+          <!-- <a href="javascript:void(0);" onclick="Ssubmit('fp{serial}_{produit_id}')" title="Ajouter au panier">Ajouter au panier</a> -->
+		  <input type="submit" class="bt_panier" value="Ajouter au panier" title="Ajouter au panier" />
+          <!-- END: panier -->
+        </div>
+      </div>
+    </div>
+		<input type="hidden" name="pid" value="{produit_id}" />
+		<input type="hidden" name="act" value="addP" />
+		<input type="hidden" name="ctl" value="{ctl}" />
+	</form>
+  </li>
+  <!-- END:produit -->
+</ul>
+
+<script type="text/javascript" src="{racine}/{theme}/{lg}/templates/variantes_multicriteres.min.js"></script>
+<script type="text/javascript" src="{cdn}/js/kiubi.api.pfo.jquery-1.0.min.js"></script>
+
+<style>
+	.criterion {
+		display: block;
+		width:100%;
+		height:30px;
+	}
+	.criterion span {
+		display: inline-block;
+		width: 70px;
+		display: inline-block;
+		width: 65px;
+		text-align: right;
+	}
+	ul.produit_liste li form .produit_infos .criterion select{
+		float: none;
+		margin: 0 10px;
+	}
+	.price {
+		color: #A6A6A6;
+		font-size: 1.5em;
+		float: left;
+		line-height: 30px;
+	}
+</style>
+
+<script>
+	
+	jQuery(function($){
+		
+		var query = kiubi.get('/catalog' + ('{widget_categorie_id}' ? '/categories/{widget_categorie_id}' : '') + '/products.json', {
+			'limit'        : parseInt("{widget_limit}"),
+			'page'         : parseInt("{num_page}")-1,
+			'sort'         : "{widget_order_api}",
+			'available'    : "{widget_dispo}",
+			'in_stock'     : "{widget_stock}",
+			'extra_fields' : 'price_label,variants',
+			'tags'         : "{widget_tags}",
+			'tags_rule'    : ("{widget_tags_logique}" == "et" ? "and" : "or")
+		});
+		
+		query.done(function(meta, data){
+			
+			$.each(data, function(i, product){
+				var $form = $('input[name=pid][value='+product.id+']').closest('form');
+				var $container = $('select[name=vid]', $form).wrap('<div>').parent();
+				$container.variantes_multicriteres(product);
+			});
+			
+		});
+				
+	});
+	
+</script>
+<!-- END:produits -->
+<!-- BEGIN:noproduit -->
+Pas de produit disponible
+<!-- END:noproduit -->
+<!-- END: main -->
